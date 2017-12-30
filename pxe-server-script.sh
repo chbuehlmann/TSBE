@@ -90,7 +90,7 @@ label proxmox-debug-install
 mkdir -p /var/lib/tftpboot/proxmox 
 cd /var/lib/tftpboot/proxmox
 git clone https://github.com/morph027/pve-iso-2-pxe.git
-wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_4.1-09720205-26.iso
+wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_5.1-3.iso
 /bin/bash /var/lib/tftpboot/proxmox/pve-iso-2-pxe/pve-iso-2-pxe.sh /var/lib/tftpboot/proxmox/proxmox.iso
 
 mkdir -p /var/lib/tftpboot/ubuntu-installer 
