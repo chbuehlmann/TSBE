@@ -1,0 +1,98 @@
+#!/bin/sh
+# Script to install a PXE-Server (including DHCP and TFTPD). Please enshure a static IP like 
+# The Management-Network
+# auto ens19
+# iface ens19 inet static
+# address 192.168.1.10
+# netmask 255.255.255.0
+# in /etc/network/interfaces
+# Check if we're root and re-execute if we're not.
+rootcheck () {
+    if [ $(id -u) != "0" ]
+    then
+        sudo "$0" "$@"  # Modified as suggested below.
+        exit $?
+    fi
+}
+# install all Stuff
+apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux 
+# configure ISC DHCP
+echo "authoritative;
+allow booting;
+allow bootp;
+
+next-server 192.168.1.10;
+filename "/pxelinux.0";
+
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.50 192.168.1.254;
+    option broadcast-address 192.168.1.255;
+    option routers 192.168.1.10;
+    option domain-name-servers 192.168.1.10;
+}
+" >> /etc/dhcp/dhcpd.conf
+# configure TFTP
+echo "TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/var/lib/tftpboot"
+TFTP_ADDRESS="192.168.1.50:69"
+TFTP_OPTIONS="-l --secure"" >> /etc/default/tftp-hpa
+
+echo "/var/lib/tftpboot 192.168.1.0/255.255.255.0(rw,no_root_squash,no_subtree_check,async)"
+
+exportfs -ra
+
+# add PXE-Files
+mkdir -p /var/lib/tftpboot/pxelinux.cfg 
+
+cp /usr/lib/PXELINUX/pxelinux.0 /var/lib/tftpboot
+cp /usr/lib/syslinux/modules/bios/menu.c32 /var/lib/tftpboot
+cp /usr/lib/syslinux/modules/bios/ldlinux.c32 ldlinux.c32
+cp /usr/lib/syslinux/modules/bios/libcom32.c32 libcom32.c32
+cp /usr/lib/syslinux/modules/bios/libutil.c32 libutil.c32
+cp /usr/lib/syslinux/modules/bios/chain.c32 chain.c32
+
+mkdir -p /var/lib/tftpboot/memtest 
+cd /var/lib/tftpboot/memtest
+wget http://www.memtest.org/download/5.01/memtest86+-5.01.bin.gz
+gunzip memtest86+-5.01.bin.gz
+mv memtest86+-5.01.bin memtest86
+
+echo "DEFAULT menu.c32
+ALLOWOPTIONS 0
+PROMPT 0
+TIMEOUT 0
+
+MENU TITLE Server PXE Boot Server
+
+LABEL      memtest
+MENU LABEL ^Memtest86+
+KERNEL     memtest/memtest86
+
+label cli
+        menu label ^Command-line install
+        kernel ubuntu-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=eth0 url=https://raw.githubusercontent.com/chbuehlmann/TSBE/master/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+
+label proxmox-install
+        menu label ^Install Proxmox
+        linux proxmox/linux26
+        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
+        initrd proxmox/initrd.iso.img splash=verbose
+
+label proxmox-debug-install
+        menu label Install Proxmox (^Debug Mode)
+        linux proxmox/linux26
+        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=verbose proxdebug
+        initrd proxmox/initrd.iso.img splash=verbose
+
+" >> /var/lib/tftpboot/pxelinux.cfg/default
+
+mkdir -p /var/lib/tftpboot/proxmox 
+cd /var/lib/tftpboot/proxmox
+git clone https://github.com/morph027/pve-iso-2-pxe.git
+wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_4.1-09720205-26.iso
+/bin/bash /var/lib/tftpboot/proxmox/pve-iso-2-pxe/pve-iso-2-pxe.sh /var/lib/tftpboot/proxmox/proxmox.iso
+
+mkdir -p /var/lib/tftpboot/ubuntu-installer 
+cd /var/lib/tftpboot/ubuntu-installer 
+wget -r -np -R "index.html*" -nH --cut-dirs=9 http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/
