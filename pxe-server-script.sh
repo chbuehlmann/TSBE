@@ -46,12 +46,12 @@ exportfs -ra
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
 
-cp /usr/lib/PXELINUX/pxelinux.0 /var/lib/tftpbootcd /
+cp /usr/lib/PXELINUX/pxelinux.0 /var/lib/tftpboot
 cp /usr/lib/syslinux/modules/bios/menu.c32 /var/lib/tftpboot
-cp /usr/lib/syslinux/modules/bios/ldlinux.c32 ldlinux.c32
-cp /usr/lib/syslinux/modules/bios/libcom32.c32 libcom32.c32
-cp /usr/lib/syslinux/modules/bios/libutil.c32 libutil.c32
-cp /usr/lib/syslinux/modules/bios/chain.c32 chain.c32
+cp /usr/lib/syslinux/modules/bios/ldlinux.c32 /var/lib/tftpboot
+cp /usr/lib/syslinux/modules/bios/libcom32.c32 /var/lib/tftpboot
+cp /usr/lib/syslinux/modules/bios/libutil.c32 /var/lib/tftpboot
+cp /usr/lib/syslinux/modules/bios/chain.c32 /var/lib/tftpboot
 
 mkdir -p /var/lib/tftpboot/memtest 
 cd /var/lib/tftpboot/memtest
@@ -71,7 +71,7 @@ MENU LABEL ^Memtest86+
 KERNEL     memtest/memtest86
 
 label cli
-        menu label ^Command-line install
+        menu label ^Ubuntu install
         kernel ubuntu-installer/amd64/linux
         append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=eth0 url=https://raw.githubusercontent.com/chbuehlmann/TSBE/master/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
