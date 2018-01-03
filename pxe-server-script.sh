@@ -21,7 +21,7 @@ apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux ng
 # configure static IP 
 sed -i 's$iface ens19 inet dhcp$iface ens19 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0$' /etc/network/interfaces
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
-sed -i 's$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
+sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 cd /var/www/html/
 git clone https://github.com/chbuehlmann/TSBE.git
 git checkout develop
