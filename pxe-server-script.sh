@@ -20,6 +20,9 @@ apt-get upgrade -y
 apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
 # configure nginx
 sed -i 's$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
+cd /var/www/html/
+git clone https://github.com/chbuehlmann/TSBE.git
+git checkout develop
 # configure ISC DHCP
 echo "authoritative;
 allow booting;
@@ -75,7 +78,7 @@ KERNEL     memtest/memtest86
 label cli
         menu label ^Ubuntu install
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/repo/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Install Proxmox
