@@ -69,25 +69,29 @@ ALLOWOPTIONS 0
 PROMPT 0
 TIMEOUT 0
 
-MENU TITLE Server PXE Boot Server
+MENU TITLE TSBE VIRT PXE Boot Server
 
-LABEL      memtest
-MENU LABEL ^Memtest86+
-KERNEL     memtest/memtest86
+MENU AUTOBOOT Starting Ubuntu Xenial 64-Bit in # seconds
+timeout 300
+
+label memtest
+        menu label ^Memtest86+
+        kernel memtest/memtest86
 
 label cli
-        menu label ^Ubuntu install
+        menu label ^Ubuntu Xenial 64-Bit install
+        menu default
         kernel ubuntu-installer/amd64/linux
         append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
-        menu label ^Install Proxmox
+        menu label ^Proxmox Install
         linux proxmox/pxeboot/linux26
         append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=4000000 rw quiet splash=silent
         initrd proxmox/pxeboot/initrd.iso.img splash=verbose
 
 label proxmox-debug-install
-        menu label Install Proxmox (^Debug Mode)
+        menu label Proxmox Install (^Debug Mode)
         linux proxmox/pxeboot/linux26
         append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=4000000 rw quiet splash=verbose proxdebug
         initrd proxmox/pxeboot/initrd.iso.img splash=verbose
