@@ -73,19 +73,19 @@ KERNEL     memtest/memtest86
 label cli
         menu label ^Ubuntu install
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=eth0 url=https://raw.githubusercontent.com/chbuehlmann/TSBE/master/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=https://raw.githubusercontent.com/chbuehlmann/TSBE/develop/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Install Proxmox
-        linux proxmox/linux26
-        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=silent
-        initrd proxmox/initrd.iso.img splash=verbose
+        linux proxmox/pxeboot/linux26
+        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=4000000 rw quiet splash=silent
+        initrd proxmox/pxeboot/initrd.iso.img splash=verbose
 
 label proxmox-debug-install
         menu label Install Proxmox (^Debug Mode)
-        linux proxmox/linux26
-        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=16777216 rw quiet splash=verbose proxdebug
-        initrd proxmox/initrd.iso.img splash=verbose
+        linux proxmox/pxeboot/linux26
+        append vga=791 video=vesafb:ywrap,mtrr ramdisk_size=4000000 rw quiet splash=verbose proxdebug
+        initrd proxmox/pxeboot/initrd.iso.img splash=verbose
 
 " >> /var/lib/tftpboot/pxelinux.cfg/default
 
