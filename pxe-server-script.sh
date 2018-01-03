@@ -17,7 +17,9 @@ rootcheck () {
 # install all Stuff
 apt-get update -y
 apt-get upgrade -y
-apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux  -y
+apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
+# configure nginx
+sed -i 's$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 # configure ISC DHCP
 echo "authoritative;
 allow booting;
@@ -29,8 +31,8 @@ filename \"/pxelinux.0\";
 subnet 192.168.1.0 netmask 255.255.255.0 {
     range 192.168.1.50 192.168.1.254;
     option broadcast-address 192.168.1.255;
-    option routers 192.168.1.10;
-    option domain-name-servers 192.168.1.10;
+    option routers 192.168.1.2;
+    option domain-name-servers 192.168.1.2;
 }
 " >> /etc/dhcp/dhcpd.conf
 # configure TFTP
@@ -73,7 +75,7 @@ KERNEL     memtest/memtest86
 label cli
         menu label ^Ubuntu install
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=https://raw.githubusercontent.com/chbuehlmann/TSBE/develop/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/repo/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Install Proxmox
