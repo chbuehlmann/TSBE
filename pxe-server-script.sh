@@ -6,7 +6,7 @@
 # address 192.168.1.10
 # netmask 255.255.255.0
 # in /etc/network/interfaces
-# Check if we're root and re-execute if we're not.
+# You should be root! (not sudo)
 rootcheck () {
     if [ $(id -u) != "0" ]
     then
@@ -15,14 +15,16 @@ rootcheck () {
     fi
 }
 # install all Stuff
-apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux 
+apt-get update -y
+apt-get upgrade -y
+apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux  -y
 # configure ISC DHCP
 echo "authoritative;
 allow booting;
 allow bootp;
 
 next-server 192.168.1.10;
-filename "/pxelinux.0";
+filename \"/pxelinux.0\";
 
 subnet 192.168.1.0 netmask 255.255.255.0 {
     range 192.168.1.50 192.168.1.254;
@@ -44,7 +46,7 @@ exportfs -ra
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
 
-cp /usr/lib/PXELINUX/pxelinux.0 /var/lib/tftpboot
+cp /usr/lib/PXELINUX/pxelinux.0 /var/lib/tftpbootcd /
 cp /usr/lib/syslinux/modules/bios/menu.c32 /var/lib/tftpboot
 cp /usr/lib/syslinux/modules/bios/ldlinux.c32 ldlinux.c32
 cp /usr/lib/syslinux/modules/bios/libcom32.c32 libcom32.c32
