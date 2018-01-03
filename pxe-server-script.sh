@@ -23,8 +23,7 @@ sed -i 's$iface ens19 inet dhcp$iface ens19 inet static\naddress 192.168.1.10\nn
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
 sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 cd /var/www/html/
-git clone https://github.com/chbuehlmann/TSBE.git
-git checkout develop
+git clone -b develop https://github.com/chbuehlmann/TSBE.git
 # configure ISC DHCP
 echo "authoritative;
 allow booting;
