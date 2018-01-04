@@ -17,36 +17,18 @@ rootcheck () {
 # install all Stuff
 apt-get update -y
 apt-get upgrade -y
-apt-get install isc-dhcp-server tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
+apt-get install dnsmasq tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
 # configure static IP 
 sed -i 's$iface ens19 inet dhcp$iface ens19 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ndns-nameservers 192.168.1.2$' /etc/network/interfaces
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
 sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 cd /var/www/html/
 git clone -b develop https://github.com/chbuehlmann/TSBE.git
-# configure ISC DHCP
-echo "authoritative;
-allow booting;
-allow bootp;
+# configure DNSMASQ
 
-next-server 192.168.1.10;
-filename \"/pxelinux.0\";
 
-subnet 192.168.1.0 netmask 255.255.255.0 {
-    range 192.168.1.50 192.168.1.254;
-    option broadcast-address 192.168.1.255;
-    option routers 192.168.1.2;
-    option domain-name-servers 192.168.1.2;
-}
 
-group {
-    use-host-decl-names on;
-    
-    host blade1 {
-      hardware ethernet D4:85:64:58:36:10;
-    }
-}
-" >> /etc/dhcp/dhcpd.conf
+
 # configure TFTP
 echo "TFTP_USERNAME="tftp"
 TFTP_DIRECTORY="/var/lib/tftpboot"
