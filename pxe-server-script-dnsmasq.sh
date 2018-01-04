@@ -15,6 +15,7 @@ rootcheck () {
     fi
 }
 # install all Stuff
+rootcheck
 apt-get update -y
 apt-get upgrade -y
 apt-get install dnsmasq tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
@@ -25,19 +26,28 @@ sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.github
 cd /var/www/html/
 git clone -b develop https://github.com/chbuehlmann/TSBE.git
 # configure DNSMASQ
+echo "
+domain-needed
+bogus-priv
 
+resolv-file=/etc/ppp/resolv.conf
 
+expand-hosts
 
+domain=tsbe.local
+dhcp-option=option:router,192.168.1.2
+dhcp-leasefile=/var/lib/misc/dnsmasq.leases
+dhcp-authoritative
+dhcp-range=192.168.1.50,192.168.1.254,255.255.255.0,15m
 
-# configure TFTP
-echo "TFTP_USERNAME="tftp"
-TFTP_DIRECTORY="/var/lib/tftpboot"
-TFTP_ADDRESS="192.168.1.50:69"
-TFTP_OPTIONS="-l --secure"" >> /etc/default/tftp-hpa
+dhcp-host=D4:85:64:58:36:10,blade1
+dhcp-host=00:25:B3:A4:24:A8,blade2
 
-echo "/var/lib/tftpboot 192.168.1.0/255.255.255.0(rw,no_root_squash,no_subtree_check,async)"
-
-exportfs -ra
+# Enable dnsmasq's built-in TFTP server
+enable-tftp
+tftp-root=/var/lib/tftpboot
+dhcp-boot=pxelinux.0
+" >> /etc/dnsmasq.conf
 
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
