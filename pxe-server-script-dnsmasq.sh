@@ -18,9 +18,9 @@ rootcheck () {
 rootcheck
 apt-get update -y
 apt-get upgrade -y
-apt-get install dnsmasq tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
+apt-get install ntp dnsmasq tftpd-hpa nfs-kernel-server syslinux pxelinux nginx -y
 # configure static IP 
-sed -i 's$iface ens19 inet dhcp$iface ens19 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ndns-nameservers 192.168.1.2$' /etc/network/interfaces
+sed -i 's$iface ens19 inet dhcp$iface ens19 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2$' /etc/network/interfaces
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
 sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 cd /var/www/html/
@@ -48,6 +48,9 @@ enable-tftp
 tftp-root=/var/lib/tftpboot
 dhcp-boot=pxelinux.0
 " >> /etc/dnsmasq.conf
+echo "nameserver 8.8.8.8
+nameserver 8.8.4.4
+" >> /etc/ppp/resolv.conf
 
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
