@@ -18,53 +18,12 @@ rootcheck () {
 rootcheck
 apt-get update -y
 apt-get upgrade -y
-apt-get install ntp dnsmasq nfs-kernel-server syslinux pxelinux nginx -y
-# configure static IP 
-sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 127.0.0.1 8.8.8.8 8.8.4.4\ndns-search tsbe.local$' /etc/network/interfaces
+apt-get install ntp nfs-kernel-server syslinux pxelinux nginx -y
+
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
 sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
 cd /var/www/html/
 git clone -b develop https://github.com/chbuehlmann/TSBE.git
-# configure DNSMASQ
-echo "
-domain-needed
-bogus-priv
-
-resolv-file=/etc/ppp/resolv.conf
-
-expand-hosts
-
-domain=tsbe.local
-dhcp-option=option:router,192.168.1.2
-dhcp-leasefile=/var/lib/misc/dnsmasq.leases
-dhcp-authoritative
-dhcp-range=192.168.1.50,192.168.1.254,255.255.255.0,15m
-
-dhcp-host=D4:85:64:58:36:10,blade1
-dhcp-host=00:25:B3:A4:24:A8,blade2
-dhcp-host=00:25:B3:A6:91:10,blade3
-dhcp-host=00:25:B3:A5:BC:A0,blade4
-dhcp-host=D4:85:64:58:A4:40,blade5
-dhcp-host=00:25:B3:A4:04:30,blade6
-dhcp-host=00:25:B3:A4:E1:A8,blade7
-dhcp-host=00:25:B3:A3:0F:40,blade8
-dhcp-host=D4:85:64:58:07:B8,blade9
-dhcp-host=00:25:B3:A4:14:88,blade10
-dhcp-host=D4:85:64:58:94:80,blade11
-dhcp-host=D4:85:64:58:17:50,blade12
-dhcp-host=D4:85:64:58:F6:30,blade13
-dhcp-host=D4:85:64:58:94:98,blade14
-dhcp-host=D4:85:64:58:E6:F8,blade15
-dhcp-host=D4:85:64:58:B6:30,blade16
-
-# Enable dnsmasq's built-in TFTP server
-enable-tftp
-tftp-root=/var/lib/tftpboot
-dhcp-boot=pxelinux.0
-" >> /etc/dnsmasq.conf
-echo "nameserver 8.8.8.8
-nameserver 8.8.4.4
-" >> /etc/ppp/resolv.conf
 
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
@@ -125,3 +84,48 @@ wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_5.1-3.iso
 mkdir -p /var/lib/tftpboot/ubuntu-installer 
 cd /var/lib/tftpboot/ubuntu-installer 
 wget -r -np -R "index.html*" -nH --cut-dirs=9 http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/
+
+# install and configure DNSMASQ
+apt-get install dnsmasq -y
+echo "
+domain-needed
+bogus-priv
+
+resolv-file=/etc/ppp/resolv.conf
+
+expand-hosts
+
+domain=tsbe.local
+dhcp-option=option:router,192.168.1.2
+dhcp-leasefile=/var/lib/misc/dnsmasq.leases
+dhcp-authoritative
+dhcp-range=192.168.1.50,192.168.1.254,255.255.255.0,15m
+
+dhcp-host=D4:85:64:58:36:10,blade1
+dhcp-host=00:25:B3:A4:24:A8,blade2
+dhcp-host=00:25:B3:A6:91:10,blade3
+dhcp-host=00:25:B3:A5:BC:A0,blade4
+dhcp-host=D4:85:64:58:A4:40,blade5
+dhcp-host=00:25:B3:A4:04:30,blade6
+dhcp-host=00:25:B3:A4:E1:A8,blade7
+dhcp-host=00:25:B3:A3:0F:40,blade8
+dhcp-host=D4:85:64:58:07:B8,blade9
+dhcp-host=00:25:B3:A4:14:88,blade10
+dhcp-host=D4:85:64:58:94:80,blade11
+dhcp-host=D4:85:64:58:17:50,blade12
+dhcp-host=D4:85:64:58:F6:30,blade13
+dhcp-host=D4:85:64:58:94:98,blade14
+dhcp-host=D4:85:64:58:E6:F8,blade15
+dhcp-host=D4:85:64:58:B6:30,blade16
+
+# Enable dnsmasq's built-in TFTP server
+enable-tftp
+tftp-root=/var/lib/tftpboot
+dhcp-boot=pxelinux.0
+" >> /etc/dnsmasq.conf
+echo "nameserver 8.8.8.8
+nameserver 8.8.4.4
+" >> /etc/ppp/resolv.conf
+
+# configure static IP 
+sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 127.0.0.1 8.8.8.8 8.8.4.4\ndns-search tsbe.local$' /etc/network/interfaces
