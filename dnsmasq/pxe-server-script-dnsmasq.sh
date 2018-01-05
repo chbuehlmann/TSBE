@@ -122,10 +122,12 @@ dhcp-host=D4:85:64:58:B6:30,blade16
 enable-tftp
 tftp-root=/var/lib/tftpboot
 dhcp-boot=pxelinux.0
+
+conf-file=/home/build/TSBE/dnsmasq/,*.conf
 " >> /etc/dnsmasq.conf
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
 " >> /etc/ppp/resolv.conf
 
 # configure static IP 
-sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 127.0.0.1 8.8.8.8 8.8.4.4\ndns-search tsbe.local$' /etc/network/interfaces
+sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 192.168.1.2\ndns-search tsbe.local$' /etc/network/interfaces
