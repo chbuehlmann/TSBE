@@ -55,11 +55,21 @@ label memtest
         menu label ^Memtest86+
         kernel memtest/memtest86
 
-label cli
+label ubuntu-no-preseed
+        menu label Ubuntu Xenial 64-Bit install (no preseed)
+        kernel ubuntu-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+
+label ubuntu-preseed
+        menu label Ubuntu Xenial 64-Bit install (no ETH-intf preselected)
+        kernel ubuntu-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+
+label ubuntu-preseed-preselected-ethernet
         menu label ^Ubuntu Xenial 64-Bit install
         menu default
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Proxmox Install
@@ -123,7 +133,7 @@ enable-tftp
 tftp-root=/var/lib/tftpboot
 dhcp-boot=pxelinux.0
 
-conf-file=/home/build/TSBE/dnsmasq/,*.conf
+conf-file=/home/build/TSBE/dnsmasq/staticdhcp.conf
 " >> /etc/dnsmasq.conf
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
