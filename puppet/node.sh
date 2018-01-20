@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$1" = blade1.tsbe.local ]
 then
-  echo "environment: integration"
+  echo "environment: test"
 elif [ "$1" = blade2.tsbe.local ]
 then
   echo "environment: integration"
