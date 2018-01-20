@@ -34,4 +34,8 @@ echo "sources:
     basedir: '/etc/puppetlabs/code/environments'
 " >> /etc/puppetlabs/r10k/r10k.yaml
 
+echo "*/1 * * * * root -c 'cd /etc/puppetlabs/TSBE && /usr/bin/git pull -q origin develop'
+*/1 * * * * root -c 'r10k deploy environment -pv'
+" >> /etc/crontab
+
 systemctl start puppetserver
