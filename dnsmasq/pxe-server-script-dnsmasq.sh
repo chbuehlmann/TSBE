@@ -133,7 +133,7 @@ enable-tftp
 tftp-root=/var/lib/tftpboot
 dhcp-boot=pxelinux.0
 
-conf-file=/home/build/TSBE/dnsmasq/staticdhcp.conf
+conf-file/var/www/html/TSBE/dnsmasq/staticdhcp.conf
 " >> /etc/dnsmasq.conf
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
