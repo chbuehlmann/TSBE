@@ -25,6 +25,9 @@ sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.github
 cd /var/www/html/
 git clone -b develop https://github.com/chbuehlmann/TSBE.git
 
+echo "*/1 * * * * root cd /var/www/html/TSBE && /usr/bin/git pull -q origin develop
+" >> /etc/crontab
+
 # add PXE-Files
 mkdir -p /var/lib/tftpboot/pxelinux.cfg 
 
@@ -48,7 +51,7 @@ TIMEOUT 0
 
 MENU TITLE TSBE VIRT PXE Boot Server
 
-MENU AUTOBOOT Starting Ubuntu Xenial 64-Bit in # seconds
+MENU AUTOBOOT Debian Stretch 64-Bit in # seconds
 timeout 300
 
 label memtest
@@ -58,23 +61,30 @@ label memtest
 label ubuntu-no-preseed
         menu label Ubuntu Xenial 64-Bit install (no preseed)
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/get_hostname=ubuntu priority=critical vga=normal
+        initrd ubuntu-installer/amd64/initrd.gz    
 
 label ubuntu-preseed
         menu label Ubuntu Xenial 64-Bit install (no ETH-intf preselected)
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
 
 label ubuntu-preseed-preselected-ethernet
         menu label ^Ubuntu Xenial 64-Bit install
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
 		
 label debian-preseed-preselected-ethernet
-        menu label ^Debian Xenial 64-Bit install
+        menu label ^Debian Stretch 64-Bit install
         menu default
-        kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/debian-installation/preseed.cfg netcfg/get_hostname=debian priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+        kernel debian-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/debian-installation/preseed.cfg netcfg/get_hostname=debian priority=critical vga=normal initrd debian-installer/amd64/initrd.gz  	
+		
+label debian-no-preseed
+        menu label Debian Stretch 64-Bit install (no preseed)
+        kernel debian-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch priority=critical vga=normal
+		initrd debian-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Proxmox Install
@@ -96,9 +106,24 @@ git clone https://github.com/morph027/pve-iso-2-pxe.git
 wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_5.1-3.iso
 /bin/bash /var/lib/tftpboot/proxmox/pve-iso-2-pxe/pve-iso-2-pxe.sh /var/lib/tftpboot/proxmox/proxmox.iso
 
+# ubuntu Netinstall
 mkdir -p /var/lib/tftpboot/ubuntu-installer 
 cd /var/lib/tftpboot/ubuntu-installer 
 wget -r -np -R "index.html*" -nH --cut-dirs=9 http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/
+
+# debian Netinstall (mit Non-Free Drivers nach https://cptyesterday.wordpress.com/2012/06/11/adding-non-free-drivers-to-a-debian-netboot-initrd/)
+mkdir -p /var/lib/tftpboot/debian-installer/tmp
+cd /var/lib/tftpboot/debian-installer 
+wget -e robots=off -r -np -R "index.html*" -nH --cut-dirs=9 http://debian.ethz.ch/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/amd64/
+cp /var/lib/tftpboot/debian-installer/amd64/initrd.gz /var/lib/tftpboot/debian-installer/tmp
+cd /var/lib/tftpboot/debian-installer/tmp 
+gunzip <initrd.gz | cpio --extract --preserve --verbose
+rm /var/lib/tftpboot/debian-installer/tmp/initrd.gz
+mkdir -p /var/lib/tftpboot/debian-installer/tmp/lib/firmware
+wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-nonfree_20161130-3.debian.tar.xz
+tar -xf firmware-nonfree_20161130-3.debian.tar.xz
+cp -Rav /var/lib/tftpboot/debian-installer/tmp/debian/firmware-bnx2* /var/lib/tftpboot/debian-installer/tmp/lib/firmware/
+find . | cpio --create --format='newc' | gzip >../amd64/initrd.gz
 
 # install and configure DNSMASQ
 apt-get install dnsmasq -y
