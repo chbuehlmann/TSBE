@@ -67,9 +67,14 @@ label ubuntu-preseed
 
 label ubuntu-preseed-preselected-ethernet
         menu label ^Ubuntu Xenial 64-Bit install
-        menu default
         kernel ubuntu-installer/amd64/linux
         append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
+		
+label debian-preseed-preselected-ethernet
+        menu label ^Debian Xenial 64-Bit install
+        menu default
+        kernel ubuntu-installer/amd64/linux
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/debian-installation/preseed.cfg netcfg/get_hostname=debian priority=critical vga=normal initrd=ubuntu-installer/amd64/initrd.gz  
 
 label proxmox-install
         menu label ^Proxmox Install
