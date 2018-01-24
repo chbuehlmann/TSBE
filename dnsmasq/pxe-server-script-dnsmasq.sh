@@ -115,14 +115,19 @@ wget -r -np -R "index.html*" -nH --cut-dirs=9 http://archive.ubuntu.com/ubuntu/d
 mkdir -p /var/lib/tftpboot/debian-installer/tmp
 cd /var/lib/tftpboot/debian-installer 
 wget -e robots=off -r -np -R "index.html*" -nH --cut-dirs=9 http://debian.ethz.ch/debian/dists/stretch/main/installer-amd64/current/images/netboot/debian-installer/amd64/
+
 cp /var/lib/tftpboot/debian-installer/amd64/initrd.gz /var/lib/tftpboot/debian-installer/tmp
 cd /var/lib/tftpboot/debian-installer/tmp 
 gunzip <initrd.gz | cpio --extract --preserve --verbose
 rm /var/lib/tftpboot/debian-installer/tmp/initrd.gz
 mkdir -p /var/lib/tftpboot/debian-installer/tmp/lib/firmware
-wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-nonfree_20161130-3.debian.tar.xz
-tar -xf firmware-nonfree_20161130-3.debian.tar.xz
-cp -Rav /var/lib/tftpboot/debian-installer/tmp/debian/firmware-bnx2* /var/lib/tftpboot/debian-installer/tmp/lib/firmware/
+
+wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2_20161130-3_all.deb
+wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2x_20161130-3_all.deb
+
+dpkg -x firmware-bnx2_20161130-3_all.deb ./
+dpkg -x firmware-bnx2x_20161130-3_all.deb ./
+
 find . | cpio --create --format='newc' | gzip >../amd64/initrd.gz
 
 # install and configure DNSMASQ
