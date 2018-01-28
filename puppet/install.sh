@@ -65,9 +65,7 @@ su - postgres
  createdb -O puppetdb puppetdb
 exit
 
-/opt/puppetlabs/bin/puppet resource package puppetdb ensure=latest
-/opt/puppetlabs/bin/puppet resource service puppetdb ensure=running enable=true
-/opt/puppetlabs/bin/puppet resource package puppetdb-termini ensure=latest
+mkdir -p /etc/puppetlabs/puppetdb/conf.d/
 
 echo "
 [database]
@@ -77,5 +75,9 @@ subname = //localhost:5432/puppetdb
 username = puppetdb
 password = puppetdb
 " >> /etc/puppetlabs/puppetdb/conf.d/database.ini
+
+/opt/puppetlabs/bin/puppet resource package puppetdb ensure=latest
+/opt/puppetlabs/bin/puppet resource service puppetdb ensure=running enable=true
+/opt/puppetlabs/bin/puppet resource package puppetdb-termini ensure=latest
 
 systemctl start puppetserver
