@@ -7,6 +7,7 @@
 # netmask 255.255.255.0
 # in /etc/network/interfaces
 # You should be root! (not sudo)
+# APT-Cacher http://dns:3142/acng-report.html
 rootcheck () {
     if [ $(id -u) != "0" ]
     then
@@ -18,7 +19,7 @@ rootcheck () {
 rootcheck
 apt-get update -y
 apt-get upgrade -y
-apt-get install ntp nfs-kernel-server syslinux pxelinux nginx -y
+apt-get install ntp nfs-kernel-server syslinux pxelinux nginx apt-cacher-ng -y
 
 # configure nginx (Git-Checkout because working woth only a Proxy is behind the EDU-Intrusion Detection of GIBB not this easy)
 sed -i '/^#/! s$location / {$location /repo {\n\t\tproxy_pass https://raw.githubusercontent.com/chbuehlmann/TSBE/master;\n\t}\n\n\tlocation / {$' /etc/nginx/sites-enabled/default
