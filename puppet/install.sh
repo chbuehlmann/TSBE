@@ -60,10 +60,8 @@ echo "*/1 * * * * root cd /etc/puppetlabs/TSBE && /usr/bin/git pull -q origin de
 
 chown -R puppet:puppet `/opt/puppetlabs/bin/puppet config print confdir`
 
-su - postgres
- psql -c "CREATE USER puppetdb WITH PASSWORD 'puppetdb';"
- createdb -O puppetdb puppetdb
-exit
+su postgres -c "psql -c \"CREATE USER puppetdb WITH PASSWORD 'puppetdb';\""
+su postgres -c "createdb -O puppetdb puppetdb"
 
 mkdir -p /etc/puppetlabs/puppetdb/conf.d/
 
