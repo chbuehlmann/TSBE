@@ -78,4 +78,8 @@ password = puppetdb
 /opt/puppetlabs/bin/puppet resource service puppetdb ensure=running enable=true
 /opt/puppetlabs/bin/puppet resource package puppetdb-termini ensure=latest
 
+service puppetdb stop
+/opt/puppetlabs/bin/puppetdb ssl-setup
+
+systemctl start puppetdb
 systemctl start puppetserver
