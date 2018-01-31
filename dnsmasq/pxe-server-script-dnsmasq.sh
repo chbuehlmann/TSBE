@@ -147,23 +147,6 @@ dhcp-leasefile=/var/lib/misc/dnsmasq.leases
 dhcp-authoritative
 dhcp-range=192.168.1.50,192.168.1.254,255.255.255.0,15m
 
-dhcp-host=D4:85:64:58:36:10,blade1
-dhcp-host=00:25:B3:A4:24:A8,blade2
-dhcp-host=00:25:B3:A6:91:10,blade3
-dhcp-host=00:25:B3:A5:BC:A0,blade4
-dhcp-host=D4:85:64:58:A4:40,blade5
-dhcp-host=00:25:B3:A4:04:30,blade6
-dhcp-host=00:25:B3:A4:E1:A8,blade7
-dhcp-host=00:25:B3:A3:0F:40,blade8
-dhcp-host=D4:85:64:58:07:B8,blade9
-dhcp-host=00:25:B3:A4:14:88,blade10
-dhcp-host=D4:85:64:58:94:80,blade11
-dhcp-host=D4:85:64:58:17:50,blade12
-dhcp-host=D4:85:64:58:F6:30,blade13
-dhcp-host=D4:85:64:58:94:98,blade14
-dhcp-host=D4:85:64:58:E6:F8,blade15
-dhcp-host=D4:85:64:58:B6:30,blade16
-
 # Enable dnsmasq's built-in TFTP server
 enable-tftp
 tftp-root=/var/lib/tftpboot
