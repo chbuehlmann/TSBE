@@ -103,7 +103,7 @@ label proxmox-debug-install
 mkdir -p /var/lib/tftpboot/proxmox 
 cd /var/lib/tftpboot/proxmox
 git clone https://github.com/morph027/pve-iso-2-pxe.git
-wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_5.1-3.iso
+wget -O proxmox.iso http://download.proxmox.com/iso/proxmox-ve_5.3-2.iso
 /bin/bash /var/lib/tftpboot/proxmox/pve-iso-2-pxe/pve-iso-2-pxe.sh /var/lib/tftpboot/proxmox/proxmox.iso
 
 # ubuntu Netinstall
@@ -122,8 +122,8 @@ gunzip <initrd.gz | cpio --extract --preserve --verbose
 rm /var/lib/tftpboot/debian-installer/tmp/initrd.gz
 mkdir -p /var/lib/tftpboot/debian-installer/tmp/lib/firmware
 
-wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2_20161130-3_all.deb
-wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2x_20161130-3_all.deb
+wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2_20161130-4_all.deb
+wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2x_20161130-4_all.deb
 
 dpkg -x firmware-bnx2_20161130-3_all.deb ./
 dpkg -x firmware-bnx2x_20161130-3_all.deb ./
@@ -151,7 +151,7 @@ enable-tftp
 tftp-root=/var/lib/tftpboot
 dhcp-boot=pxelinux.0
 
-conf-file/var/www/html/TSBE/dnsmasq/staticdhcp.conf
+conf-file=/var/www/html/TSBE/dnsmasq/staticdhcp.conf
 " >> /etc/dnsmasq.conf
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
