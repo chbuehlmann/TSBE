@@ -3,7 +3,7 @@
 # The Management-Network
 # auto ens19
 # iface ens19 inet static
-# address 192.168.1.10
+# address 192.168.1.20
 # netmask 255.255.255.0
 # in /etc/network/interfaces
 # You should be root! (not sudo)
@@ -67,18 +67,18 @@ label ubuntu-no-preseed
 label ubuntu-preseed
         menu label Ubuntu Xenial 64-Bit install (no ETH-intf preselected)
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch url=http://192.168.1.20/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
 
 label ubuntu-preseed-preselected-ethernet
         menu label ^Ubuntu Xenial 64-Bit install
         kernel ubuntu-installer/amd64/linux
-        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
+        append ramdisk_size=14984 locale=de_CH console-setup/layoutcode=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.20/TSBE/ubuntu-installation/preseed.cfg netcfg/get_hostname=ubuntu priority=critical vga=normal initrd ubuntu-installer/amd64/initrd.gz  
 		
 label debian-preseed-preselected-ethernet
         menu label ^Debian Stretch 64-Bit install
         menu default
         kernel debian-installer/amd64/linux
-        append ramdisk_size=14984  locale=de_CH console-setup/layoutcode=ch keymap=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.10/TSBE/debian-installation/preseed.cfg netcfg/get_hostname=debian priority=critical vga=normal initrd debian-installer/amd64/initrd.gz  	
+        append ramdisk_size=14984  locale=de_CH console-setup/layoutcode=ch keymap=ch netcfg/choose_interface=enp2s0f0 url=http://192.168.1.20/TSBE/debian-installation/preseed.cfg netcfg/get_hostname=debian priority=critical vga=normal initrd debian-installer/amd64/initrd.gz  	
 		
 label debian-no-preseed
         menu label Debian Stretch 64-Bit install (no preseed)
@@ -158,4 +158,4 @@ nameserver 8.8.4.4
 " >> /etc/ppp/resolv.conf
 
 # configure static IP 
-sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.10\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 192.168.1.2\ndns-search tsbe.local$' /etc/network/interfaces
+# sed -i 's$iface ens18 inet dhcp$iface ens18 inet static\naddress 192.168.1.20\nnetmask 255.255.255.0\ngateway 192.168.1.2\ndns-nameservers 192.168.1.2\ndns-search tsbe.local$' /etc/network/interfaces
