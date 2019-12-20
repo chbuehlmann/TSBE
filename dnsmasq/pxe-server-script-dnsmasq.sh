@@ -154,6 +154,7 @@ dhcp-boot=pxelinux.0
 
 conf-file=/var/www/html/TSBE/dnsmasq/staticdhcp.conf
 " >> /etc/dnsmasq.conf
+mkdir -p /etc/ppp
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
 " >> /etc/ppp/resolv.conf
