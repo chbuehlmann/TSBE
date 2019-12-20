@@ -123,11 +123,11 @@ gunzip <initrd.gz | cpio --extract --preserve --verbose
 rm /var/lib/tftpboot/debian-installer/tmp/initrd.gz
 mkdir -p /var/lib/tftpboot/debian-installer/tmp/lib/firmware
 
-wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2_20161130-4_all.deb
-wget http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2x_20161130-4_all.deb
+wget -O firmware-bnx2_all.deb http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2_20161130-5_all.deb
+wget -O firmware-bnx2x_all.deb http://debian.ethz.ch/debian/pool/non-free/f/firmware-nonfree/firmware-bnx2x_20161130-5_all.deb
 
-dpkg -x firmware-bnx2_20161130-3_all.deb ./
-dpkg -x firmware-bnx2x_20161130-3_all.deb ./
+dpkg -x firmware-bnx2_all.deb ./
+dpkg -x firmware-bnx2x_all.deb ./
 
 find . | cpio --create --format='newc' | gzip >../amd64/initrd.gz
 
