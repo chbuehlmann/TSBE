@@ -17,3 +17,6 @@ apt-get install ntp nfs-kernel-server -y
 mkdir -p /mnt/sharefolder
 echo "/mnt/sharedfolder 192.168.1.0/24(rw,sync,no_subtree_check)
 " > /etc/exports
+
+exportfs -ra
+service nfs-kernel-server restart
