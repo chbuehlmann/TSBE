@@ -18,5 +18,7 @@ mkdir -p /mnt/sharedfolder
 echo "/mnt/sharedfolder 192.168.1.0/24(rw,sync,no_subtree_check)
 " > /etc/exports
 
+chown nobody:nogroup /mnt/sharedfolder/
+
 exportfs -ra
 service nfs-kernel-server restart
